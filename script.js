@@ -27,7 +27,7 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const allIssues = 'https://sta2020.atlassian.net/rest/api/3/search?jql=ORDER%20BY%20Created&startAt=1001&maxresults=100';
 const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=100&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
+const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=200&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
 
 
 async function fetchData() {
@@ -51,7 +51,8 @@ async function fetchData() {
             const customField = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
             const summary = data.issues[i].fields && data.issues[i].fields["summary"];
             const sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"];
-            const completed = data.issues[i].fields && data.issues[i].fields["status"]["statusCategory"]["name"];
+            // const completed = data.issues[i].fields && data.issues[i].fields["status"]["statusCategory"]["name"];
+            const completed = data.issues[i].fields && data.issues[i].fields["status"]["name"]
             const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
             const time = ConvertSeconds(timespent);
 
