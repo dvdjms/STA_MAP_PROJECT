@@ -27,7 +27,7 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const allIssues = 'https://sta2020.atlassian.net/rest/api/3/search?jql=ORDER%20BY%20Created&startAt=1001&maxresults=100';
 const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
+const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=100&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
 
 
 async function fetchData() {
@@ -50,23 +50,16 @@ async function fetchData() {
         for (let i = 0; i < data.issues.length; i++){
             const customField = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
             const summary = data.issues[i].fields && data.issues[i].fields["summary"];
-            const valueAdded = data.issues[i].fields && data.issues[i].fields["customfield_10180"];
-
             const sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"];
             const completed = data.issues[i].fields && data.issues[i].fields["status"]["statusCategory"]["name"];
             const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
             const time = ConvertSeconds(timespent);
 
             if(customField !== null && customField !== undefined && completed == "Done" || completed == "Activity complete"){
-                let n =0
-                if (completed === "Done")
-                    n++
-                    console.log("Done:", n)
                 const projectInformation = {
                     postcode: customField,
                     summary: summary,
                     sector: sector,
-                    valueAdded: valueAdded,
                     time: time,
                     completed: completed
                 };
@@ -110,7 +103,6 @@ const initMap = () => {
                     });
 
                     // Add click event listener to the marker
-                    // <p>${location.valueAdded.value}</p>
                     marker.addListener('click', function() {
                         // Set content for the InfoWindow
                         var contentString = `<div className = "popuptext">
@@ -133,53 +125,52 @@ const initMap = () => {
             getCoordinates();
             
         });
-        ////////////////////////////////////////////////////////////////////////////
+
         var imageBounds = {
             north: 58.98182,
             south: 57.181400,
             east:  2.902282,
             west: -0.502282,
         };
-            var img = new Image();
-            img.src = './stapic.png';
-            var staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
-            staOverlay.setMap(map);
 
+        var img = new Image();
+        img.src = './stapic.png';
+        var staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
+        staOverlay.setMap(map);
 
-            const icons = {
-                HEALTH: {
-                    name: 'HEALTH AND SOCIAL CARE',
-                    icon: 'MarkerPink.png'
-                },
-                LOCAL: {
-                    name: 'LOCAL BUSINESS RECOVERY',
-                    icon: 'MarkerGreen.png'
-                },
-                TRAVEL: {
-                    name: 'TRAVEL AND TOURISM',
-                    icon: 'MarkerBlue.png'
-                },
-                REMOTE: {
-                    name: 'REMOTE SUPPORT',
-                    icon: 'MarkerRed.png'
-                },
-                EDUCATION: {
-                    name: 'EDUCATION AND TRAINING',
-                    icon: 'MarkerPurple.png'
-                }
-              };
-              let legend = document.getElementById('legend');
+        const icons = {
+            HEALTH: {
+                name: 'HEALTH AND SOCIAL CARE',
+                icon: 'MarkerPink.png'
+            },
+            LOCAL: {
+                name: 'LOCAL BUSINESS RECOVERY',
+                icon: 'MarkerGreen.png'
+            },
+            TRAVEL: {
+                name: 'TRAVEL AND TOURISM',
+                icon: 'MarkerBlue.png'
+            },
+            REMOTE: {
+                name: 'REMOTE SUPPORT',
+                icon: 'MarkerRed.png'
+            },
+            EDUCATION: {
+                name: 'EDUCATION AND TRAINING',
+                icon: 'MarkerPurple.png'
+            }
+        };
+        let legend = document.getElementById('legend');
 
-              for (let key in icons) {
-                    let type = icons[key];
-                    let name = type.name;
-                    let icon = type.icon;
-                    let div = document.createElement('div');
-                    div.innerHTML = `<img style="width: 18px;" src="${icon}">&nbsp;&nbsp; ${name}<br>`
-                    legend.appendChild(div);
-              }
-              map.controls[google.maps.ControlPosition.LEFT_TOP].push(legend);
-////////////////////////////////////////////////////////////////////////////
+        for (let key in icons) {
+            let type = icons[key];
+            let name = type.name;
+            let icon = type.icon;
+            let div = document.createElement('div');
+            div.innerHTML = `<img style="width: 18px;" src="${icon}">&nbsp;&nbsp; ${name}<br>`
+            legend.appendChild(div);
+        }
+        map.controls[google.maps.ControlPosition.LEFT_TOP].push(legend);
     };
 };
 
@@ -189,7 +180,6 @@ function initializeMap() {
     fetchData().then(initMap);
 }
 window.onload = initializeMap;
-
 
 
 async function Postcode(postcode) {
