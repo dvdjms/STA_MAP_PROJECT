@@ -1,0 +1,31 @@
+html {
+    box-sizing: border-box;
+    font-size: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+#map {
+    margin: auto;
+    height: 900px; 
+    width: 80%;
+}
+
+.popupclass {
+    font-size: 14px;
+}
+
+
+#summary {
+    color: #fb0f02;
+    font-weight: bold;
+}
+
+#legend {
+    font-size: 12px;
+}
