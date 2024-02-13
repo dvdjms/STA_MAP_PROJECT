@@ -15,7 +15,7 @@ window.initMap = function() {
 
 // Append the 'script' element to 'head'
 document.head.appendChild(script);
-const postCodesFromJira = [];
+const projectDataFromJira = [];
 
 
 const david_email = David_email;
@@ -27,7 +27,7 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const allIssues = 'https://sta2020.atlassian.net/rest/api/3/search?jql=ORDER%20BY%20Created&startAt=1001&maxresults=100';
 const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=200&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
+const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=700&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
 
 
 async function fetchData() {
@@ -64,7 +64,7 @@ async function fetchData() {
                     time: time,
                     completed: completed
                 };
-                postCodesFromJira.push(projectInformation);
+                projectDataFromJira.push(projectInformation);
             };
         };
         initMap();
@@ -90,9 +90,12 @@ const initMap = () => {
 
     var infoWindow = new google.maps.InfoWindow();  // Create a new InfoWindow
 
-    if (Array.isArray(postCodesFromJira)) {
+    let legend = document.getElementById('legend');
+    legend.innerHTML = ''; // Clear the legend element
 
-        postCodesFromJira.forEach((location) => {
+    if (Array.isArray(projectDataFromJira)) {
+
+        projectDataFromJira.forEach((location) => {
             async function getCoordinates() {
                 try {
                     const coordinates = await Postcode(location.postcode.trim())
@@ -161,20 +164,19 @@ const initMap = () => {
                 icon: 'MarkerPurple.png'
             }
         };
-        let legend = document.getElementById('legend');
 
         for (let key in icons) {
             let type = icons[key];
             let name = type.name;
             let icon = type.icon;
             let div = document.createElement('div');
-            div.innerHTML = `<img style="width: 18px;" src="${icon}">&nbsp;&nbsp; ${name}<br>`
+            div.innerHTML = `<img style="width: 18px; float:left;" src="${icon}">&nbsp;&nbsp; ${name}<br><br>`
             legend.appendChild(div);
         }
         map.controls[google.maps.ControlPosition.LEFT_TOP].push(legend);
+   
     };
 };
-
 
 // Use window.onload to ensure that the Google Maps API has loaded before initializing the map
 function initializeMap() {
