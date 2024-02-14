@@ -25,9 +25,10 @@ const STA_API_key = STA_Jira_API_key;
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const allIssues = 'https://sta2020.atlassian.net/rest/api/3/search?jql=ORDER%20BY%20Created&startAt=1001&maxresults=100';
+const allIssues = 'https://sta2020.atlassian.net/rest/api/3/issues';
 const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=700&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent,status';
+const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults=1000&fields=summary,customfield_10099,customfield_10148,customfield_10027,customfield_10214,timespent,status';
+
 
 
 async function fetchData() {
@@ -48,21 +49,19 @@ async function fetchData() {
         console.log('Response data', data)
 
         for (let i = 0; i < data.issues.length; i++){
-            const customField = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
+            const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
             const summary = data.issues[i].fields && data.issues[i].fields["summary"];
             const sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"];
-            // const completed = data.issues[i].fields && data.issues[i].fields["status"]["statusCategory"]["name"];
-            const completed = data.issues[i].fields && data.issues[i].fields["status"]["name"]
+            const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
             const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
             const time = ConvertSeconds(timespent);
 
-            if(customField !== null && customField !== undefined && completed == "Done" || completed == "Activity complete"){
+            if(postcode !== null && postcode !== undefined && published !== null){
                 const projectInformation = {
-                    postcode: customField,
+                    postcode: postcode,
                     summary: summary,
                     sector: sector,
                     time: time,
-                    completed: completed
                 };
                 projectDataFromJira.push(projectInformation);
             };
@@ -113,7 +112,6 @@ const initMap = () => {
                             <p id="summary">${location.summary}</p>
                             <p>${location.sector.value}</p>
                             <p>${location.time}</p>
-                            <p>${location.completed}</p>
                             <a href=${location.postcode} target=”_blank”>${location.postcode}</a>
                             </div>`;
                         
