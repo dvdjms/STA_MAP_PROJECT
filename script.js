@@ -25,9 +25,9 @@ const STA_API_key = STA_Jira_API_key;
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const allIssues = 'https://sta2020.atlassian.net/rest/api/3/issues';
-const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults=1000&fields=summary,customfield_10099,customfield_10148,customfield_10027,customfield_10214,timespent,status';
+// const allIssues = 'https://sta2020.atlassian.net/rest/api/3/issues';
+// const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
+const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults=1000&fields=summary,customfield_10099,customfield_10148,customfield_10214,timespent';
 
 
 
