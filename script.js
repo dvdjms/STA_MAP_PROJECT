@@ -18,28 +18,12 @@ document.head.appendChild(script);
 const projectDataFromJira = [];
 
 
-const david_email = David_email;
-const david_api_key = David_jira_api_key;
-const michael_email = Michael_email;
-const STA_API_key = STA_Jira_API_key;
-
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-
-// const allIssues = 'https://sta2020.atlassian.net/rest/api/3/issues';
-// const allProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&active=false';
-const filteredProjects = 'https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults=1000&fields=summary,customfield_10099,customfield_10148,customfield_10214,timespent';
-
-
+const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
 
 async function fetchData() {
     try {
-        const response = await fetch(proxyUrl + filteredProjects, {
+        const response = await fetch(AWS_API_Gateway, {
             method: 'GET',
-            headers: {
-                // 'Authorization': 'Basic ' + btoa(michael_email + ':' + STA_API_key),
-                'Authorization': 'Basic ' + btoa(david_email + ':' + david_api_key),
-                'Accept': 'application/json',
-            }
         });
         if (!response.ok) {
             throw new Error('Failed to fetch data');
@@ -56,7 +40,7 @@ async function fetchData() {
             const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
             const time = ConvertSeconds(timespent);
 
-            if(postcode !== null && postcode !== undefined && published !== null){
+            if(postcode !== null && postcode !== undefined && published == null){
                 const projectInformation = {
                     postcode: postcode,
                     summary: summary,
