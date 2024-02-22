@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+<!-- npx http-server -p 8000 -->
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -13,10 +15,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
-        <link rel="stylesheet" href="style.css">
         <style>
             html {
-                box-sizing: border-box;
+                /* box-sizing: border-box; */
                 font-size: 100%;
             }
 
@@ -35,6 +36,12 @@
 
             .popupclass {
                 font-size: 14px;
+                text-align: center;
+            }
+
+            .leaflet-popup-content-wrapper {
+                background-color: #fffcf7;
+                border: 5px #dc7242 solid;
             }
 
             #summary {
@@ -43,6 +50,13 @@
             }
 
             #legend {
+                position: absolute;
+                top: 150px;
+                left: 20px;
+                background-color: rgb(255, 255, 255, 0.5);
+                padding: 10px;
+                border-radius: 5px;
+                z-index: 1000; 
                 font-size: 12px;
                 text-align: left;
             }
@@ -58,14 +72,18 @@
 
         <script>
             var map = L.map('map').setView([56.7, -3.91], 6.9);
-    
+
+            // https://tile.openstreetmap.org/{z}/{x}/{y}.png
+
+            // http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png
+            // https://maps.geoapify.com/v1/styles/toner/style.json?apiKey=37f0bef6c6cc4a40ba07adfbd7066fea
+            // https://maps.geoapify.com/v1/tile/toner-grey/{z}/{x}/{y}.png?apiKey=37f0bef6c6cc4a40ba07adfbd7066fea
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }).addTo(map);
     
             var markers = L.markerClusterGroup();
-
 
             const projectDataFromJira = [];
 
@@ -81,7 +99,7 @@
                     }
 
                     const data = await response.json();
-                    console.log('Response data', data)
+                    console.log('Response data', data);
 
                     for (let i = 0; i < data.issues.length; i++){
                         const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
@@ -116,7 +134,8 @@
                             async function getCoordinates() {
                                 try {
                                     const coordinates = await Postcode(location.postcode.trim())
-    
+                                    var lat = 0;
+                                    var lng = 0;
                                     if (coordinates && coordinates.status === 200) {
                                         lat = parseFloat(coordinates.result.latitude)
                                         lng = parseFloat(coordinates.result.longitude)}
@@ -126,8 +145,8 @@
                                     } 
                                 catch (error) {
                                     console.error('Error:', error)
-                                }
-                            }
+                                };
+                            };
                             getCoordinates();
                         });
                 
