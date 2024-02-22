@@ -17,7 +17,6 @@ window.initMap = function() {
 document.head.appendChild(script);
 const projectDataFromJira = [];
 
-
 const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
 
 async function fetchData() {
@@ -55,8 +54,11 @@ async function fetchData() {
     } catch (error) {
         console.error('Error: failed to fetch', error);
         throw error;
-    }
-}
+    };
+};
+
+
+
 
 
 const initMap = () => {
@@ -77,8 +79,7 @@ const initMap = () => {
     legend.innerHTML = ''; // Clear the legend element
 
     if (Array.isArray(projectDataFromJira)) {
-
-        projectDataFromJira.forEach((location) => {
+        projectDataFromJira[0].forEach((location) => {
             async function getCoordinates() {
                 try {
                     const coordinates = await Postcode(location.postcode.trim())
@@ -109,7 +110,6 @@ const initMap = () => {
                 }
             }
             getCoordinates();
-            
         });
 
         var imageBounds = {
