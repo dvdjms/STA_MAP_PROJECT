@@ -1,5 +1,5 @@
 // to run: npx http-server -p 8000
-
+// https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=0&maxResults=1000&fields=summary,customfield_10099,customfield_10180,customfield_10148,customfield_10027,timespent
 import {STA_Jira_API_key, David_jira_api_key, apiKeyMap, David_email, Michael_email} from "/config.js";
 
 // Create the script tag, set the appropriate attributes
@@ -27,7 +27,7 @@ async function fetchData() {
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
-
+        
         const data = await response.json();
         console.log('Response data', data)
 
@@ -56,10 +56,6 @@ async function fetchData() {
         throw error;
     };
 };
-
-
-
-
 
 const initMap = () => {
     var map = new google.maps.Map(document.getElementById("map"), {

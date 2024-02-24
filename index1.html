@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>STA Google Map</title>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <script type="module" src="script.js"></script>
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+    <body>
+        <h1>STA Project Map</h1>
+        <div id="map"></div>
+        <div id="legend" style="font-family: Bebas Neue, Arial, sans-serif; font-size: 14px; font-weight: normal; background: #fff; padding: 15px; width: 260px; margin: 15px; border: 3px solid #3C3C3B;">
+        </div>
+
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUg5OK4-Ob9TyJikGeBJIKtmk7V99fMD0"></script>
+        <script>
+          function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 4,
+              center: {lat: -25.363, lng: 131.044} // Example center coordinates
+            });
+      
+            var markers = [
+              {lat: -25.363, lng: 131.044},
+              {lat: -25.363, lng: 131.046},
+              {lat: -25.364, lng: 131.045},
+              // Additional marker coordinates...
+            ];
+      
+            var markerCluster = new MarkerClusterer(map, markers, {
+              imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+              gridSize: 50, // Adjust as needed
+              maxZoom: 15 // Adjust as needed
+            });
+          }
+        </script>
+        <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+      </head>
+      <body>
+        <div id="map" style="height: 400px;"></div>
+        <script>
+          initMap();
+        </script>
+    </body>
+</html>
