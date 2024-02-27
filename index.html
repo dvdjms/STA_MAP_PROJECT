@@ -150,6 +150,7 @@
                     const data = await response.json();
                     console.log('Response data', data);
                     var sector = '';
+                    var impactValue = '';
                     for (let i = 0; i < data.issues.length; i++){
                         const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
                         const summary = data.issues[i].fields && data.issues[i].fields["summary"];
@@ -157,7 +158,12 @@
                             sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"].value;
                         }
                         const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
-                        const impactValue = data.issues[i].fields && data.issues[i].fields["customfield_10197"];
+                        if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
+                            impactValue = 'tbc';
+                        }
+                        else {
+                            impactValue = `£${data.issues[i].fields && data.issues[i].fields["customfield_10197"]}.00`;
+                        };
                         const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
                         const time = ConvertSeconds(timespent);
 

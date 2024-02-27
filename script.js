@@ -20,7 +20,7 @@ const jira = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&
 const jira2 = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults,"
 const project = "https://sta2020.atlassian.net/rest/api/3/project/{IT-781}"
 const fields = "https://sta2020.atlassian.net/rest/api/3/field"
-const notempty = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002+and+cf[10214]+is+not+null&fields=summary,,customfield_10099,customfield_10148,customfield_10214,timespent"
+const notempty = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002+and+cf[10214]+is+not+null&fields=summary,customfield_10099,customfield_10148,customfield_10214,timespent"
 
 document.head.appendChild(script);
 const projectDataFromJira = [];
