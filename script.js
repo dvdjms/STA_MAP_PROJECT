@@ -14,6 +14,14 @@ window.initMap = function() {
 };
 
 // Append the 'script' element to 'head'
+
+const proxy = "https://cors-anywhere.herokuapp.com/"
+const jira = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults=100&fields=summary,customfield_10099,customfield_10148,customfield_10214,timespent"
+const jira2 = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002&startAt=600&maxResults,"
+const project = "https://sta2020.atlassian.net/rest/api/3/project/{IT-781}"
+const fields = "https://sta2020.atlassian.net/rest/api/3/field"
+const notempty = "https://sta2020.atlassian.net/rest/api/3/search?jql=project=10002+and+cf[10214]+is+not+null&fields=summary,,customfield_10099,customfield_10148,customfield_10214,timespent"
+
 document.head.appendChild(script);
 const projectDataFromJira = [];
 
@@ -21,9 +29,14 @@ const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com
 
 async function fetchData() {
     try {
-        const response = await fetch(AWS_API_Gateway, {
+        const response = await fetch(proxy + notempty, {
             method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + btoa(Michael_email + ':' + STA_Jira_API_key),
+                'Accept': 'application/json'
+              }
         });
+        console.log('this', response)
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
