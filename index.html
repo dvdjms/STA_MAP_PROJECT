@@ -45,7 +45,7 @@
             }
             .loader::after{
                 border-color: #ff0000;
-                animation: prixClipFix 2s linear infinite , rotate 0.5s linear infinite reverse;
+                animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
                 inset: 6px;
             }
             @keyframes rotate {
@@ -61,7 +61,6 @@
             }
 
             html {
-                /* box-sizing: border-box; */
                 font-size: 100%;
                 font-family: "Poppins", sans-serif;
             }
@@ -89,12 +88,10 @@
                 font-size: 14px;
                 text-align: left;
                 width: fit-content;
-                
             }
 
             .leaflet-popup-content-wrapper {
                 background-color: #ffffff;
-                opacity: 0.94;
                 border: 1px #313030 solid;
                 border-bottom: 0;
                 box-shadow: 5px -1px 5px 4px rgba(67,67,67,0.72);
@@ -114,27 +111,27 @@
                 text-transform: uppercase;
                 margin-bottom: 5px;
                 margin-top: 0;
-
-                
-                
             }
 
             #legend {
                 background-color: rgba(255, 255, 255, 0.904);
                 border-radius: 5px;
-                font-family: "Poppins", sans-serif;
-                font-size: 18px;
-                font-weight: normal; 
                 width: fit-content; 
                 margin: 15px; 
                 border: 3px solid #3C3C3B;
                 left: -300px;
-                padding: 27px 15px 15px 15px;
+                opacity: 0;
+                padding: 20px 15px 7px 15px;
                 position: absolute;
                 text-align: left;
                 top: 150px;
                 transition: left 1s ease;
                 z-index: 500; 
+            }
+            #legendText {
+                font-family: "Poppins", sans-serif;
+                font-weight: normal; 
+                font-size: 14px;
             }
         </style>
         
@@ -142,8 +139,6 @@
     <body>
         <h1>STA Open Street Map</h1>
         
-
-
         <div class="loader-container" id="loader-container">
             <span class="loader" id="loader"></span>
         </div>
@@ -432,17 +427,13 @@
                             let type = newIcons[key];
                             let name = type.name;
                             let icon = type.icon;
-                            let div = document.createElement('div');
-                            div.innerHTML = `<img style="width: 18px; float:left;" src="${icon}" />&nbsp;&nbsp;${name}<br><br>`;
-                            legend.appendChild(div);
+                            let legendIconRow = document.createElement('div');
+                            legendIconRow.style.height = '37px';
+                            legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 3px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name}</span><br><br>`;
+                            legend.appendChild(legendIconRow);
                         }
-
                     };
-                
                     map.addLayer(markers);
-            
-                    // var popup = L.popup();
-
                 } catch (error) {
                     console.error('Error: failed to fetch and process data', error);
                 };
@@ -466,7 +457,7 @@
                 mapElement.style.opacity = '1';
                 setTimeout(() => {
                     const legendElement = document.getElementById('legend');
-                    legendElement.style.opacity = '1';
+                    legendElement.style.opacity = '0.94';
                     legendElement.style.left = '20px';
                 }, 1000);
             };
