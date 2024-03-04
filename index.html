@@ -150,11 +150,6 @@
         <script>
             var map = L.map('map').setView([56.7, -3.91], 6.9);
 
-            // https://tile.openstreetmap.org/{z}/{x}/{y}.png
-
-            // http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png
-            // https://maps.geoapify.com/v1/styles/toner/style.json?apiKey=37f0bef6c6cc4a40ba07adfbd7066fea
-            // https://maps.geoapify.com/v1/tile/toner-grey/{z}/{x}/{y}.png?apiKey=37f0bef6c6cc4a40ba07adfbd7066fea
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -224,7 +219,7 @@
                     }
 
                     const data = await response.json();
-                    console.log('Response data', data);
+              
                     var sector = '';
                     var impactValue = '';
                     for (let i = 0; i < data.issues.length; i++){
@@ -429,7 +424,7 @@
                             let icon = type.icon;
                             let legendIconRow = document.createElement('div');
                             legendIconRow.style.height = '37px';
-                            legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 3px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name}</span><br><br>`;
+                            legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 4px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name}</span><br><br>`;
                             legend.appendChild(legendIconRow);
                         }
                     };
