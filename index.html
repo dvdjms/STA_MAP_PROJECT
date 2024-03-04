@@ -210,6 +210,11 @@
             
             var markers = L.markerClusterGroup();
 
+            let pounds = Intl.NumberFormat('en-GB', {
+                style: 'currency',
+                currency: 'GBP',
+            });
+
             const projectDataFromJira = [];
 
             const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
@@ -235,10 +240,10 @@
                         }
                         const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
-                            impactValue = 'tbc';
+                            impactValue = 'TBC';
                         }
                         else {
-                            impactValue = `£${data.issues[i].fields && data.issues[i].fields["customfield_10197"]}.00`;
+                            impactValue = `${pounds.format(data.issues[i].fields && data.issues[i].fields["customfield_10197"])}`;
                         };
                         const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
                         const time = ConvertSeconds(timespent);
