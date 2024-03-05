@@ -152,7 +152,7 @@
 
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <img height=12px src="https://stamapmarker3.s3.amazonaws.com/MarkerBlack.png"> <a href="https://icons8.com/icons/set/marker">icons8</a>',
             }).addTo(map);
 
             var greenIcon = new L.Icon({
@@ -190,7 +190,7 @@
                 popupAnchor: [4, -34],
             });
 
-             var orangeIcon = new L.Icon({
+            var orangeIcon = new L.Icon({
                 iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerOrange.png',
                 iconSize: [32, 34],
                 iconAnchor: [13, 35],
