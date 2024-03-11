@@ -40,7 +40,7 @@
                 position: absolute;
                 inset: 0px;
                 border-radius: 50%;
-                border: 5px solid #f57702;
+                border: 5px solid #EC6730;
                 animation: prixClipFix 2s linear infinite ;
             }
             .loader::after{
@@ -105,7 +105,7 @@
             }
 
             #summary {
-                color: #ff4d00;
+                color: #EC6730;
                 font-weight: bold;
                 font-size: 16px;
                 text-transform: uppercase;
@@ -133,6 +133,20 @@
                 font-weight: normal; 
                 font-size: 14px;
             }
+
+            .marker-cluster-small div {
+                background-color: rgba(236, 103, 48, 0.9);
+                font-family: "Poppins", sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .leaflet-marker-icon.marker-cluster.marker-cluster-small.leaflet-zoom-animated.leaflet-interactive {
+                background-color: rgba(236, 103, 48, 0.3) !important;
+            }
+
+           
+
         </style>
         
     </head>
@@ -142,6 +156,8 @@
         <div class="loader-container" id="loader-container">
             <span class="loader" id="loader"></span>
         </div>
+
+        
 
         <div id="map"></div>
         <div id="legend">
