@@ -5,21 +5,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>STA Open Street Map</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+        <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
+
         <style>
            .loader-container {
                 display: flex;
@@ -60,19 +48,10 @@
                 100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
             }
 
-            html {
-                font-size: 100%;
-                font-family: "Poppins", sans-serif;
-            }
-
             body {
                 margin: 0;
                 padding: 0;
                 text-align: center;
-            }
-
-            h1 {
-                font-family: "Poppins", sans-serif;
             }
 
             #map {
@@ -81,13 +60,17 @@
                 opacity: 0;
                 transition: opacity 2s ease; 
                 width: 80%;
-                z-index: 500;
+                z-index: 100;
             }
 
             .popupclass {
                 font-size: 14px;
                 text-align: left;
-                width: fit-content;
+            }
+
+            .popuptext {
+                font-size: 14px;
+                text-align: left;
             }
 
             .leaflet-popup-content-wrapper {
@@ -96,12 +79,6 @@
                 border-bottom: 0;
                 box-shadow: 5px -1px 5px 4px rgba(67,67,67,0.72);
                 font-family: "Poppins", sans-serif;
-                margin-left: 0 !important;
-                padding-left: 0 !important;
-            }
-
-            #summarydiv {
-                border-bottom: #31303030 1px solid;
             }
 
             #summary {
@@ -109,8 +86,11 @@
                 font-weight: bold;
                 font-size: 16px;
                 text-transform: uppercase;
-                margin-bottom: 5px;
+                padding-bottom: 5px;
                 margin-top: 0;
+                max-width: 350px;
+                text-align: left;
+                border-bottom: #31303030 1px solid;
             }
 
             #legend {
@@ -128,6 +108,7 @@
                 transition: left 1s ease;
                 z-index: 500; 
             }
+            
             #legendText {
                 font-family: "Poppins", sans-serif;
                 font-weight: normal; 
@@ -145,82 +126,73 @@
                 background-color: rgba(236, 103, 48, 0.3) !important;
             }
 
-           
-
         </style>
-        
     </head>
     <body>
-        <h1>STA Open Street Map</h1>
-        
+        <h1>STA Project Map</h1>
         <div class="loader-container" id="loader-container">
             <span class="loader" id="loader"></span>
         </div>
-
-        
-
         <div id="map"></div>
         <div id="legend">
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        <script>
-            var map = L.map('map').setView([56.7, -3.91], 6.9);
-
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <img height=12px src="https://stamapmarker3.s3.amazonaws.com/MarkerBlack.png"> <a href="https://icons8.com/icons/set/marker">icons8</a>',
-            }).addTo(map);
-
-            var greenIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerGreen.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
+       
+       <script>
+            let script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCu1RoRDWwIdCqTNwiwpowwLzQenEZWqWw&callback=initMap`;
+            script.async = true;
+            document.head.appendChild(script);
+            let map;
+            let infoWindow;
     
-            var pinkIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerPink.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
+            function initMap(){
+                map = new google.maps.Map(document.getElementById("map"), {
+                    mapId: 'f21334c79e793a82',
+                    center: { lat: 55, lng: -5.5 },
+                    zoom: 5.9,
+                    minZoom: 4,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                });
 
-            var purpleIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerPurple.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
+                infoWindow = new google.maps.InfoWindow();  // Create a new InfoWindow
 
-            var blueIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerBlue.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
+                fetchDataAndProcess();
+                let legend = document.getElementById('legend');
+                legend.innerHTML = ''; // Clear the legend element
+            };
 
-            var redIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerRed.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
-
-            var orangeIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerOrange.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
-            var blackIcon = new L.Icon({
-                iconUrl: 'https://stamapmarker3.s3.amazonaws.com/MarkerBlack.png',
-                iconSize: [32, 34],
-                iconAnchor: [13, 35],
-                popupAnchor: [4, -34],
-            });
-            
-            var markers = L.markerClusterGroup();
-
+            const newIcons = {
+                ARTS: {
+                    name: 'Arts & Culture',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerPink.png",
+                },
+                ENVIRONMENT: {
+                    name: 'Environment & Conservation',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerGreen.png",
+                },
+                HEALTH: {
+                    name: 'Health & Social Care',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerBlue.png",
+                },
+                NONCHARITY: {
+                    name: 'Non-charity',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerRed.png",
+                },
+                EDUCATION: {
+                    name: 'Education & Youth',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerPurple.png",
+                },
+                INTERNAL: {
+                    name: 'Internal STA Project',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerOrange.png",
+                },
+                OTHER: {
+                    name: 'Other',
+                    icon: "https://stamapmarker3.s3.amazonaws.com/MarkerBlack.png",
+                },
+            };
+        
             let pounds = Intl.NumberFormat('en-GB', {
                 style: 'currency',
                 currency: 'GBP',
@@ -238,18 +210,18 @@
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
-
                     const data = await response.json();
-              
-                    var sector = '';
-                    var impactValue = '';
+                    let sector = '';
+                    let impactValue = '';
                     for (let i = 0; i < data.issues.length; i++){
                         const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
                         const summary = data.issues[i].fields && data.issues[i].fields["summary"];
+                        
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10148"] != null){
                             sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"].value;
                         }
                         const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
+                        
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
                             impactValue = 'TBC';
                         }
@@ -280,182 +252,89 @@
                 try {
                     showSpinner();
                     await fetchData();
-                    hideSpinner();
-
+           
                     if (Array.isArray(projectDataFromJira)) {
-                        projectDataFromJira.forEach((location) => {
-                            async function getCoordinates() {
-                                try {
-                                    const coordinates = await Postcode(location.postcode.trim())
-                                    var lat = 0;
-                                    var lng = 0;
-                                    if (coordinates && coordinates.status === 200) {
-                                        lat = parseFloat(coordinates.result.latitude)
-                                        lng = parseFloat(coordinates.result.longitude)}
-                                        if (location.sector === "Arts & Culture") {const marker = L.marker([lat, lng], {icon: pinkIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else if (location.sector === "Education & Youth") {const marker = L.marker([lat, lng], {icon: purpleIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else if (location.sector === "Environment & Conservation") {const marker = L.marker([lat, lng], {icon: greenIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else if (location.sector === "Health & Social Care") {const marker = L.marker([lat, lng], {icon: blueIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else if (location.sector === "Non-charity") {const marker = L.marker([lat, lng], {icon: redIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else if (location.sector === "Internal STA Project") {const marker = L.marker([lat, lng], {icon: orangeIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        else {const marker = L.marker([lat, lng], {icon: blackIcon})
-                                            .bindPopup(`<div class="popupclass">
-                                        <div id="summarydiv">
-                                            <p id='summary'>${location.summary}</p>    
-                                        </div>
-                                        <br>
-                                        ${location.sector}
-                                        <br><br>
-                                        <b>Impact value:</b> ${location.impactValue}
-                                        <br><br>
-                                        <b>Volunteer hours:</b> ${location.time}
-                                        </div>`)
-                                            .addTo(markers);}
-                                        // const marker = L.marker([lat, lng], {icon: pinkIcon})
-                                        //     .bindPopup(`<div class="popupclass"><b id='summary'>${location.summary}</b><br><br>${location.sector}<br><br><b>Impact value:</b> ${location.impactValue}<br><br><b>Volunteer hours:</b> ${location.time}</div>`)
-                                        //     .addTo(markers);
-                                    } 
-                                catch (error) {
-                                    console.error('Error:', error)
-                                };
-                            };
-                            getCoordinates();
-                        });
+                        const markers = [];
+                        for (let location of projectDataFromJira) {
+                            try {
+                                const coordinates = await Postcode(location.postcode.trim())
+                                if (coordinates && coordinates.status === 200) {
+                                    let markerIcon;
+                                    for (let key in newIcons) {
+                                        if (location.sector === newIcons[key].name) {
+                                            markerIcon = newIcons[key].icon;
+                                            break;
+                                        };
+                                    };
                 
+                                    let marker = new google.maps.Marker({
+                                        position: {lat: parseFloat(coordinates.result.latitude), lng: parseFloat(coordinates.result.longitude)},
+                                        map,
+                                        icon: {
+                                            url: markerIcon,
+                                            scaledSize: new google.maps.Size(30, 30)
+                                        },
+                                    });
+                                    markers.push(marker);
+                   
+                                    let lastWindow = null;
 
-                        // var imageBounds = {
-                        //     north: 58.98182,
-                        //     south: 57.181400,
-                        //     east:  2.902282,
-                        //     west: -0.502282,
-                        // };
+                                    marker.addListener('click', function() {
+                                        // Set content for the InfoWindow
+                                        let contentString = `<div class="popupclass">
+                                            </div id="summarydiv">
+                                                <p id="summary">${location.summary}</p>
+                                            </div>
+                                            <p class="popuptext"><b>${location.sector}</b></P>
+                                            <p class="popuptext"><b>Impact value:</b> ${location.impactValue}</P>
+                                            <p class="popuptext"><b>Volunteer hours:</b> ${location.time}</P>
+                                            </div>`;
+                                                
+                                        infoWindow.setContent(contentString);
+                                        infoWindow.open(map, marker);
 
-                        // var img = new Image();
-                        // img.src = './stapic.png';
-                        // var staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
-                        // // staOverlay.setMap(map);
-                        // const red = div.innerHTML(`<i class="bi bi-geo-alt-fill text-danger" ></i>`)
+                                        google.maps.event.addListener(map, 'click', function() {
+                                            if (infoWindow) {
+                                                infoWindow.close();;
+                                            };
+                                        });
+                         
+                                        if (lastWindow) lastWindow.close();                 
+                                    });
+                                };
+                            } catch (error) {
+                                console.error('Error:', error);
+                            };
+                        };
+                        new markerClusterer.MarkerClusterer({markers, map});
+                    };            
 
-                        const newIcons = {
-                             ARTS: {
-                                name: 'ARTS AND CULTURE',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerPink.png"
-                            },
-                            ENVIRONMENT: {
-                                name: 'ENVIRONMENT AND CONSERVATION',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerGreen.png"
-                            },
-                            HEALTH: {
-                                name: 'HEALTH AND SOCIAL CARE',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerBlue.png"
-                            },
-                            NONCHARITY: {
-                                name: 'NON-CHARITY',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerRed.png"
-                            },
-                            EDUCATION: {
-                                name: 'EDUCATION AND YOUTH',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerPurple.png"
-                            },
-                            INTERNAL: {
-                                name: 'INTERNAL STA PROJECT',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerOrange.png"
-                            },
-                            OTHER: {
-                                name: 'OTHER',
-                                icon: "https://stamapmarker3.s3.amazonaws.com/MarkerBlack.png"
-                            },
-                         };
-                        
-                         for (let key in newIcons) {
-                            let type = newIcons[key];
-                            let name = type.name;
-                            let icon = type.icon;
-                            let legendIconRow = document.createElement('div');
-                            legendIconRow.style.height = '37px';
-                            legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 4px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name}</span><br><br>`;
-                            legend.appendChild(legendIconRow);
-                        }
+                    const imageBounds = {
+                        north: 58.98182,
+                        south: 57.181400,
+                        east:  2.902282,
+                        west: -0.502282,
                     };
-                    map.addLayer(markers);
+
+                    let img = new Image();
+                    img.src = 'https://stamapmarker3.s3.amazonaws.com/stapic.png';
+                    let staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
+                    staOverlay.setMap(map);
+
+                    for (let key in newIcons) {
+                        let type = newIcons[key];
+                        let name = type.name;
+                        let icon = type.icon;
+                        let legendIconRow = document.createElement('div');
+                        legendIconRow.style.height = '37px';
+                        legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 4px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name.toUpperCase()}</span><br><br>`;
+                        legend.appendChild(legendIconRow);
+                    };
                 } catch (error) {
                     console.error('Error: failed to fetch and process data', error);
                 };
+                hideSpinner();
             };
-
-            fetchDataAndProcess();
 
             function showSpinner() {
                 document.getElementById('loader').style.display = 'block';
@@ -464,8 +343,8 @@
 
             function hideSpinner() {
                 document.getElementById('loader-container').style.display = 'none';
-                document.getElementById('legend').style.display = 'block';
                 showMapAndLegend();
+                document.getElementById('legend').style.display = 'block';
             };
 
             function showMapAndLegend() {
@@ -473,7 +352,7 @@
                 mapElement.style.opacity = '1';
                 setTimeout(() => {
                     const legendElement = document.getElementById('legend');
-                    legendElement.style.opacity = '0.94';
+                    legendElement.style.opacity = '0.97';
                     legendElement.style.left = '20px';
                 }, 1000);
             };
@@ -490,11 +369,11 @@
             };
 
             function ConvertSeconds(n) { 
-                var day = parseInt( n / (24 * 3600)); 
+                let day = parseInt( n / (24 * 3600)); 
                 n = n % (24 * 3600); 
-                var hour = parseInt(n / 3600); 
+                let hour = parseInt(n / 3600); 
                 n %= 3600; 
-                var minutes = n / 60; 
+                let minutes = n / 60; 
                 return `${day}d ${hour}h ${minutes}m`;
             };
         </script>
