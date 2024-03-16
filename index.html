@@ -5,9 +5,11 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>        
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
-
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">        <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
         <style>
            .loader-container {
                 display: flex;
@@ -22,7 +24,7 @@
                 position: relative;
                 animation: rotate 1s linear infinite
             }
-            .loader::before , .loader::after {
+            .loader::before, .loader::after {
                 content: "";
                 box-sizing: border-box;
                 position: absolute;
@@ -51,35 +53,26 @@
             body {
                 margin: 0;
                 padding: 0;
+                padding-top: 20px;
                 text-align: center;
+                font-family: "Poppins", sans-serif;
             }
 
             #map {
-                height: 700px; 
+                height: 700px;
                 margin: auto;
                 opacity: 0;
                 transition: opacity 2s ease; 
-                width: 80%;
+                width: 60%;
                 z-index: 100;
             }
 
             .popupclass {
-                font-size: 14px;
-                text-align: left;
-            }
-
-            .popuptext {
-                font-size: 14px;
-                text-align: left;
-            }
-
-            /* .leaflet-popup-content-wrapper {
-                background-color: #ffffff;
-                border: 1px #313030 solid;
-                border-bottom: 0;
-                box-shadow: 5px -1px 5px 4px rgba(67,67,67,0.72);
                 font-family: "Poppins", sans-serif;
-            } */
+                font-size: 14px;
+                text-align: left;
+                padding-left: 3px;
+            }
 
             #summary {
                 color: #EC6730;
@@ -99,7 +92,7 @@
                 width: fit-content; 
                 margin: 15px; 
                 border: 3px solid #3C3C3B;
-                left: -300px;
+                left: -500px;
                 opacity: 0;
                 padding: 20px 15px 7px 15px;
                 position: absolute;
@@ -114,22 +107,9 @@
                 font-weight: normal; 
                 font-size: 14px;
             }
-
-            .marker-cluster-small div {
-                background-color: rgba(236, 103, 48, 0.9);
-                font-family: "Poppins", sans-serif;
-                font-size: 14px;
-                font-weight: 600;
-            }
-
-            .leaflet-marker-icon.marker-cluster.marker-cluster-small.leaflet-zoom-animated.leaflet-interactive {
-                background-color: rgba(236, 103, 48, 0.3) !important;
-            }
-
         </style>
     </head>
     <body>
-        <h1>STA Project Map</h1>
         <div class="loader-container" id="loader-container">
             <span class="loader" id="loader"></span>
         </div>
@@ -154,11 +134,9 @@
                     mapTypeControl: false,
                     streetViewControl: false,
                 });
-
-                infoWindow = new google.maps.InfoWindow();  // Create a new InfoWindow
-
+                infoWindow = new google.maps.InfoWindow();
                 fetchDataAndProcess();
-                let legend = document.getElementById('legend');
+                const legend = document.getElementById('legend');
                 legend.innerHTML = ''; // Clear the legend element
             };
 
@@ -198,30 +176,26 @@
                 currency: 'GBP',
             });
 
-            const projectDataFromJira = [];
-
             const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
+            const projectDataFromJira = [];
 
             async function fetchData() {
                 try {
-                    const response = await fetch(AWS_API_Gateway, {
-                        method: 'GET',
-                    });
+                    const response = await fetch(AWS_API_Gateway)
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
                     const data = await response.json();
                     let sector = '';
                     let impactValue = '';
+
                     for (let i = 0; i < data.issues.length; i++){
                         const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
                         const summary = data.issues[i].fields && data.issues[i].fields["summary"];
-                        
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10148"] != null){
                             sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"].value;
                         }
                         const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
-                        
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
                             impactValue = 'TBC';
                         }
@@ -231,7 +205,7 @@
                         const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
                         const time = ConvertSeconds(timespent);
 
-                        if(postcode !== null && postcode !== undefined && published != null){
+                        if(postcode !== null && postcode !== undefined){
                             const projectInformation = {
                                 postcode: postcode,
                                 summary: summary,
@@ -266,7 +240,7 @@
                                             break;
                                         };
                                     };
-                
+
                                     let marker = new google.maps.Marker({
                                         position: {lat: parseFloat(coordinates.result.latitude), lng: parseFloat(coordinates.result.longitude)},
                                         map,
@@ -278,14 +252,13 @@
                                     markers.push(marker);
                 
                                     marker.addListener('click', function() {
-                                        // Set content for the InfoWindow
-                                        let contentString = `<div class="popupclass">
+                                        let contentString = `<div>
                                             </div id="summarydiv">
                                                 <p id="summary">${location.summary}</p>
                                             </div>
-                                            <p class="popuptext"><b>${location.sector}</b></P>
-                                            <p class="popuptext"><b>Impact value:</b> ${location.impactValue}</P>
-                                            <p class="popuptext"><b>Volunteer hours:</b> ${location.time}</P>
+                                            <p class="popupclass">${location.sector}</P>
+                                            <p class="popupclass">Impact value: ${location.impactValue}</P>
+                                            <p class="popupclass">Volunteer hours: ${location.time}</P>
                                             </div>`;
                                                 
                                         infoWindow.setContent(contentString);
@@ -302,7 +275,7 @@
                                 console.error('Error:', error);
                             };
                         };
-                        new markerClusterer.MarkerClusterer({markers, map});
+                        new markerClusterer.MarkerClusterer({map, markers});
                     };            
 
                     const imageBounds = {
@@ -351,7 +324,7 @@
                 setTimeout(() => {
                     const legendElement = document.getElementById('legend');
                     legendElement.style.opacity = '0.97';
-                    legendElement.style.left = '20px';
+                    legendElement.style.left = '70px';
                 }, 1000);
             };
 
