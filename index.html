@@ -73,13 +73,13 @@
                 text-align: left;
             }
 
-            .leaflet-popup-content-wrapper {
+            /* .leaflet-popup-content-wrapper {
                 background-color: #ffffff;
                 border: 1px #313030 solid;
                 border-bottom: 0;
                 box-shadow: 5px -1px 5px 4px rgba(67,67,67,0.72);
                 font-family: "Poppins", sans-serif;
-            }
+            } */
 
             #summary {
                 color: #EC6730;
@@ -106,9 +106,9 @@
                 text-align: left;
                 top: 150px;
                 transition: left 1s ease;
-                z-index: 500; 
+                z-index: 500;
             }
-            
+
             #legendText {
                 font-family: "Poppins", sans-serif;
                 font-weight: normal; 
@@ -276,9 +276,7 @@
                                         },
                                     });
                                     markers.push(marker);
-                   
-                                    let lastWindow = null;
-
+                
                                     marker.addListener('click', function() {
                                         // Set content for the InfoWindow
                                         let contentString = `<div class="popupclass">
@@ -298,8 +296,6 @@
                                                 infoWindow.close();;
                                             };
                                         });
-                         
-                                        if (lastWindow) lastWindow.close();                 
                                     });
                                 };
                             } catch (error) {
@@ -340,13 +336,15 @@
                 document.getElementById('loader').style.display = 'block';
                 document.getElementById('legend').style.display = 'none';
             };
-
+        
             function hideSpinner() {
                 document.getElementById('loader-container').style.display = 'none';
                 showMapAndLegend();
-                document.getElementById('legend').style.display = 'block';
+                const legendElement = document.getElementById('legend');
+                const screenWidth = window.innerWidth;
+                if (screenWidth >= 600) legendElement.style.display = 'block';
             };
-
+    
             function showMapAndLegend() {
                 const mapElement = document.getElementById('map');
                 mapElement.style.opacity = '1';
