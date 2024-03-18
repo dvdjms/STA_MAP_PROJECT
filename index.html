@@ -51,9 +51,9 @@
             }
 
             body {
-                margin: 0;
+                margin: 70px 0 0 0;
                 padding: 0;
-                padding-top: 20px;
+                padding-top: 50px;
                 text-align: center;
                 font-family: "Poppins", sans-serif;
             }
@@ -63,7 +63,7 @@
                 margin: auto;
                 opacity: 0;
                 transition: opacity 2s ease; 
-                width: 60%;
+                width: 65%;
                 z-index: 100;
             }
 
@@ -94,10 +94,10 @@
                 border: 3px solid #3C3C3B;
                 left: -500px;
                 opacity: 0;
-                padding: 20px 15px 7px 15px;
+                padding: 15px 15px 7px 15px;
                 position: absolute;
                 text-align: left;
-                top: 150px;
+                top: 220px;
                 transition: left 1s ease;
                 z-index: 500;
             }
@@ -256,9 +256,9 @@
                                             </div id="summarydiv">
                                                 <p id="summary">${location.summary}</p>
                                             </div>
-                                            <p class="popupclass">${location.sector}</P>
+                                            <p class="popupclass">Sector: ${location.sector}</P>
                                             <p class="popupclass">Impact value: ${location.impactValue}</P>
-                                            <p class="popupclass">Volunteer hours: ${location.time}</P>
+                                            <p class="popupclass">Volunteers time: ${location.time}</P>
                                             </div>`;
                                                 
                                         infoWindow.setContent(contentString);
@@ -296,7 +296,7 @@
                         let icon = type.icon;
                         let legendIconRow = document.createElement('div');
                         legendIconRow.style.height = '37px';
-                        legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin-top: 4px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name.toUpperCase()}</span><br><br>`;
+                        legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin: 8px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name.toUpperCase()}</span><br><br>`;
                         legend.appendChild(legendIconRow);
                     };
                 } catch (error) {
@@ -315,12 +315,14 @@
                 showMapAndLegend();
                 const legendElement = document.getElementById('legend');
                 const screenWidth = window.innerWidth;
-                if (screenWidth >= 600) legendElement.style.display = 'block';
+                if (screenWidth >= 800) legendElement.style.display = 'block';
             };
     
             function showMapAndLegend() {
                 const mapElement = document.getElementById('map');
                 mapElement.style.opacity = '1';
+                const screenWidth = window.innerWidth;
+                if (screenWidth <= 800) mapElement.style.width = '90%';
                 setTimeout(() => {
                     const legendElement = document.getElementById('legend');
                     legendElement.style.opacity = '0.97';
