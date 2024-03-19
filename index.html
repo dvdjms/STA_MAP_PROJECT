@@ -59,19 +59,24 @@
             }
 
             #map {
-                height: 700px;
+                height: 800px;
                 margin: auto;
                 opacity: 0;
                 transition: opacity 2s ease; 
-                width: 65%;
+                width: 75%;
                 z-index: 100;
             }
 
+            #popupdisplay {
+                max-width: 350px;
+            }
+            
             .popupclass {
                 font-family: "Poppins", sans-serif;
                 font-size: 14px;
                 text-align: left;
                 padding-left: 3px;
+                margin-bottom: 10px;
             }
 
             #summary {
@@ -94,10 +99,10 @@
                 border: 3px solid #3C3C3B;
                 left: -500px;
                 opacity: 0;
-                padding: 15px 15px 7px 15px;
+                padding: 15px 15px 10px 7px;
                 position: absolute;
                 text-align: left;
-                top: 220px;
+                top: 225px;
                 transition: left 1s ease;
                 z-index: 500;
             }
@@ -129,7 +134,7 @@
                 map = new google.maps.Map(document.getElementById("map"), {
                     mapId: 'f21334c79e793a82',
                     center: { lat: 55, lng: -5.5 },
-                    zoom: 5.9,
+                    zoom: 6.1,
                     minZoom: 4,
                     mapTypeControl: false,
                     streetViewControl: false,
@@ -188,7 +193,8 @@
                     const data = await response.json();
                     let sector = '';
                     let impactValue = '';
-
+                    let projectSolution = '';
+                    let valueDelivered = '';
                     for (let i = 0; i < data.issues.length; i++){
                         const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
                         const summary = data.issues[i].fields && data.issues[i].fields["summary"];
@@ -196,12 +202,30 @@
                             sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"].value;
                         }
                         const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
+                        if(data.issues[i].fields && data.issues[i].fields["customfield_10150"] === null){
+                            projectSolution = 'TBC'
+                        }
+                        else {
+                            projectSolution = data.issues[i].fields && data.issues[i].fields["customfield_10150"]['content'][0]['content'][0]['text'];
+                        }
                         if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
                             impactValue = 'TBC';
                         }
                         else {
                             impactValue = `${pounds.format(data.issues[i].fields && data.issues[i].fields["customfield_10197"])}`;
                         };
+                        let valueD = []
+                        if(data.issues[i].fields && data.issues[i].fields["customfield_10205"] != null){
+                            let valueField = data.issues[i].fields && data.issues[i].fields["customfield_10205"]
+                            for(let j = 0; j < valueField.length; j++){
+                                valueD.push(valueField[j].value);
+                            };
+                        }
+                        else {
+                            valueD = ['TBC'];
+                        };
+                        valueDelivered = valueD.join(", ");
+
                         const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
                         const time = ConvertSeconds(timespent);
 
@@ -211,6 +235,8 @@
                                 summary: summary,
                                 sector: sector,
                                 impactValue: impactValue,
+                                valueDelivered, valueDelivered,
+                                projectSolution, projectSolution,
                                 time: time,
                             };
                             projectDataFromJira.push(projectInformation);
@@ -252,13 +278,14 @@
                                     markers.push(marker);
                 
                                     marker.addListener('click', function() {
-                                        let contentString = `<div>
-                                            </div id="summarydiv">
+                                        let contentString = `<div id="popupdisplay">
+                                            <div>
                                                 <p id="summary">${location.summary}</p>
                                             </div>
-                                            <p class="popupclass">Sector: ${location.sector}</P>
-                                            <p class="popupclass">Impact value: ${location.impactValue}</P>
-                                            <p class="popupclass">Volunteers time: ${location.time}</P>
+                                            <p class="popupclass"><strong>Sector:</strong> ${location.sector}</P>
+                                            <p class="popupclass"><strong>Project solution:</strong> ${location.projectSolution}</P>
+                                            <p class="popupclass"><strong>Value delivered:</strong> ${location.valueDelivered}</P>
+                                            <p class="popupclass"><strong>Time donated:</strong> ${location.time}</P>
                                             </div>`;
                                                 
                                         infoWindow.setContent(contentString);
@@ -278,17 +305,17 @@
                         new markerClusterer.MarkerClusterer({map, markers});
                     };            
 
-                    const imageBounds = {
-                        north: 58.98182,
-                        south: 57.181400,
-                        east:  2.902282,
-                        west: -0.502282,
-                    };
+                    // const imageBounds = {
+                    //     north: 58.98182,
+                    //     south: 57.181400,
+                    //     east:  2.902282,
+                    //     west: -0.502282,
+                    // };
 
-                    let img = new Image();
-                    img.src = 'https://stamapmarker3.s3.amazonaws.com/stapic.png';
-                    let staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
-                    staOverlay.setMap(map);
+                    // let img = new Image();
+                    // img.src = 'https://stamapmarker3.s3.amazonaws.com/stapic.png';
+                    // let staOverlay = new google.maps.GroundOverlay(img.src, imageBounds);
+                    // staOverlay.setMap(map);
 
                     for (let key in newIcons) {
                         let type = newIcons[key];
@@ -296,7 +323,7 @@
                         let icon = type.icon;
                         let legendIconRow = document.createElement('div');
                         legendIconRow.style.height = '37px';
-                        legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin: 8px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name.toUpperCase()}</span><br><br>`;
+                        legendIconRow.innerHTML = `<img style="width: 18px; float:left; margin: 8px 0 0 7px" src="${icon}" />&nbsp;&nbsp;<span id="legendText">${name.toUpperCase()}</span><br><br>`;
                         legend.appendChild(legendIconRow);
                     };
                 } catch (error) {
