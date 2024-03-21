@@ -51,15 +51,18 @@
             }
 
             body {
-                margin: 70px 0 0 0;
+                margin: 0;
                 padding: 0;
-                padding-top: 50px;
                 text-align: center;
                 font-family: "Poppins", sans-serif;
             }
 
+            #mapcontainer {
+                padding-top: 70px;
+            }
+
             #map {
-                height: 800px;
+                height: 850px;
                 margin: auto;
                 opacity: 0;
                 transition: opacity 2s ease; 
@@ -115,13 +118,14 @@
         </style>
     </head>
     <body>
-        <div class="loader-container" id="loader-container">
-            <span class="loader" id="loader"></span>
-        </div>
-        <div id="map"></div>
-        <div id="legend">
-        </div>
-       
+        <div id="mapcontainer"> 
+            <div class="loader-container" id="loader-container">
+                <span class="loader" id="loader"></span>
+            </div>
+            <div id="map"></div>
+            <div id="legend">
+            </div>
+         </div>
        <script>
             let script = document.createElement('script');
             script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCu1RoRDWwIdCqTNwiwpowwLzQenEZWqWw&callback=initMap`;
@@ -133,8 +137,8 @@
             function initMap(){
                 map = new google.maps.Map(document.getElementById("map"), {
                     mapId: 'f21334c79e793a82',
-                    center: { lat: 55, lng: -5.5 },
-                    zoom: 6.1,
+                    center: { lat: 54.78, lng: -5.5 },
+                    zoom: 6.2,
                     minZoom: 4,
                     mapTypeControl: false,
                     streetViewControl: false,
