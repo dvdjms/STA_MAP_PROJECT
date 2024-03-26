@@ -474,6 +474,7 @@
                                 time: time,
                             };
                             projectDataFromJira.push(projectInformation);
+                            
                         };
                     };
                 } catch (error) {
@@ -489,9 +490,23 @@
            
                     if (Array.isArray(projectDataFromJira)) {
                         const markers = [];
+                        // console.log(projectDataFromJira[0])
+                        const coordArray = []
                         for (let location of projectDataFromJira) {
                             try {
                                 const coordinates = await Postcode(location.postcode.trim())
+                                // postcodes.push(coordinates["result"].postcode)
+                                // console.log(coordinates["result"].longitude)
+                                // const duplicates = coordinates.filter((item, index) => array.indexOf(item) !== index);
+                                coordArray.push(coordinates)
+                                const unique = coordArray.filter(
+                                    (obj, index) =>
+                                        coordArray.findIndex((item) => item["result"].longitude === obj["result"].longitude) === index
+                                    );
+                                console.log(coordinates)
+                                // console.log(unique);
+                                let newCoords = Object.assign({}, unique);
+                                console.log(newCoords);
                                 if (coordinates && coordinates.status === 200) {
                                     let markerIcon;
                                     for (let key in newIcons) {
