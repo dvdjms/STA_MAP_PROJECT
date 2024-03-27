@@ -140,6 +140,7 @@
                     center: { lat: 54.78, lng: -5.5 },
                     zoom: 6.2,
                     minZoom: 4,
+                    maxZoom: 19,
                     mapTypeControl: false,
                     streetViewControl: false,
                 });
@@ -256,7 +257,7 @@
                 try {
                     showSpinner();
                     await fetchData();
-           
+                    const usedCoordinates = new Set();
                     if (Array.isArray(projectDataFromJira)) {
                         const markers = [];
                         for (let location of projectDataFromJira) {
@@ -270,7 +271,12 @@
                                             break;
                                         };
                                     };
-
+                                    const key = `${parseFloat(coordinates.result.latitude).toFixed(6)},${parseFloat(coordinates.result.longitude).toFixed(6)}`;
+                                    if(usedCoordinates.has(key)){
+                                        coordinates.result.latitude += (Math.random() - 0.5) * 0.0001;
+                                        coordinates.result.longitude += (Math.random() - 0.5) * 0.0001;
+                                    };
+                                    usedCoordinates.add(key);
                                     let marker = new google.maps.Marker({
                                         position: {lat: parseFloat(coordinates.result.latitude), lng: parseFloat(coordinates.result.longitude)},
                                         map,
