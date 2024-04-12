@@ -102,13 +102,12 @@
                 width: fit-content; 
                 margin: 15px; 
                 border: 3px solid #3C3C3B;
-                left: -500px;
+                left: 70px;
                 opacity: 0;
                 padding: 15px 15px 10px 7px;
                 position: absolute;
                 text-align: left;
                 top: 225px;
-                /* transition: left 1s ease; */
                 transition: opacity 2s ease; 
                 z-index: 500;
                 cursor: move;
@@ -160,7 +159,7 @@
                     icon: "https://stamapmarker3.s3.amazonaws.com/MarkerPink.png",
                 },
                 ENVIRONMENT: {
-                    name: 'Environment & Conservation',
+                    name: 'Environmental & Conservation',
                     icon: "https://stamapmarker3.s3.amazonaws.com/MarkerGreen.png",
                 },
                 HEALTH: {
@@ -300,6 +299,7 @@
                                             <p class="popupclass"><strong>Sector:</strong> ${location.sector}</P>
                                             <p class="popupclass"><strong>Project solution:</strong> ${location.projectSolution}</P>
                                             <p class="popupclass"><strong>Value delivered:</strong> ${location.valueDelivered}</P>
+                                            <p class="popupclass"><strong>Economic value:</strong> ${location.impactValue}</P>
                                             <p class="popupclass"><strong>Time donated:</strong> ${location.time}</P>
                                             </div>`;
                                                 
@@ -368,7 +368,6 @@
                 setTimeout(() => {
                     const legendElement = document.getElementById('legend');
                     legendElement.style.opacity = '0.97';
-                    legendElement.style.left = '70px';
                 }, 1000);
             };
 
