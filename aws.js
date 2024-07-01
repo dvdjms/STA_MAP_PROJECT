@@ -1,20 +1,20 @@
 const https = require('https');
 
 exports.handler = async (event) => {
-    const baseUrl = 'https://sta2020.atlassian.net/rest/api/3/search';
-    const queryParams = {
-        jql: 'project=10002 AND cf[10214] IS NOT NULL',
-        fields: 'summary,customfield_10099,customfield_10148,customfield_10214,customfield_10197,timespent'
-    };
+	const baseUrl = 'https://sta2020.atlassian.net/rest/api/3/search';
+	const queryParams = {
+		jql: 'project=10002 AND cf[10214] IS NOT NULL',
+		fields: 'summary,customfield_10099,customfield_10148,customfield_10214,customfield_10197,customfield_10150,customfield_10205,timespent'
+	};
 
-    let allData = [];
+	let allData = [];
 
-    try {
-        let startAt = 0;
-        let hasNextPage = true;
-
-        while (hasNextPage) {
-            const options = {
+	try {
+		let startAt = 0;
+		let hasNextPage = true;
+				
+		while (hasNextPage) {
+			const options = {
                 hostname: 'sta2020.atlassian.net',
                 path: `${baseUrl}?${new URLSearchParams({ ...queryParams, startAt })}`,
                 method: 'GET',
@@ -29,11 +29,11 @@ exports.handler = async (event) => {
 
             // Check if there are more pages to fetch
             if (response.startAt + response.maxResults < response.total) {
-                startAt += response.maxResults;
+                    startAt += response.maxResults;
             } else {
-                hasNextPage = false;
-            }
-        }
+                    hasNextPage = false;
+            };
+		};
 
         return {
             statusCode: 200,
@@ -45,19 +45,18 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({ issues: allData }), // Return all batches as one batch
         };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
-        };
-    }
+	} catch (error) {
+		return {
+			statusCode: 500,
+			body: JSON.stringify({ error: error.message }),
+		};
+	};
 };
 
 async function fetchData(options) {
-    return new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
         const req = https.request(options, (res) => {
             let data = '';
-
             res.on('data', (chunk) => {
                 data += chunk;
             });
@@ -71,11 +70,10 @@ async function fetchData(options) {
             });
         });
 
-        req.on('error', (error) => {
-            reject(new Error(`Request failed: ${error.message}`));
-        });
-
-        req.end();
-    });
-}
+		req.on('error', (error) => {
+				reject(new Error(`Request failed: ${error.message}`));
+		});
+		req.end();
+	});
+};
 

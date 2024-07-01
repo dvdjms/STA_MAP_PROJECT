@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
 <!-- npx http-server -p 8000 -->
- <!-- Current map - bulk load - about 7 seconds-->
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">        
         <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=default"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -191,56 +190,59 @@
                 currency: 'GBP',
             });
 
-            const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
+            // const AWS_API_Gateway = 'https://0wcfxr0v92.execute-api.eu-north-1.amazonaws.com/default/STA_GET_Request';
             const projectDataFromJira = [];
 
             async function fetchData() {
                 try {
-                    const response = await fetch(AWS_API_Gateway)
+                    const response = await fetch('https://stamapmarker3.s3.amazonaws.com/sta_map_jira_data.json');
+                                              
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
                     const data = await response.json();
+                    
                     let sector = '';
                     let impactValue = '';
                     let projectSolution = '';
                     let valueDelivered = '';
                     let latitude = '';
                     let longitude = '';
-                    for (let i = 0; i < data.issues.length; i++){
-                        const postcode = data.issues[i].fields && data.issues[i].fields["customfield_10099"];
-                        const summary = data.issues[i].fields && data.issues[i].fields["summary"];
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10148"] != null){
-                            sector = data.issues[i].fields && data.issues[i].fields["customfield_10148"].value;
+
+                    for (let i = 0; i < data.length; i++){
+                        const postcode = data[i].fields && data[i].fields["customfield_10099"];
+                        const summary = data[i].fields && data[i].fields["summary"];
+                        if(data[i].fields && data[i].fields["customfield_10148"] != null){
+                            sector = data[i].fields && data[i].fields["customfield_10148"].value;
                         }
-                        const published = data.issues[i].fields && data.issues[i].fields["customfield_10214"];
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10150"] === null){
+                        const published = data[i].fields && data[i].fields["customfield_10214"];
+                        if(data[i].fields && data[i].fields["customfield_10150"] === null){
                             projectSolution = 'TBC'
                         }
                         else {
-                            projectSolution = data.issues[i].fields && data.issues[i].fields["customfield_10150"]['content'][0]['content'][0]['text'];
+                            projectSolution = data[i].fields && data[i].fields["customfield_10150"]['content'][0]['content'][0]['text'];
                         }
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10197"] === null){
+                        if(data[i].fields && data[i].fields["customfield_10197"] === null){
                             impactValue = 'TBC';
                         }
                         else {
-                            impactValue = `${pounds.format(data.issues[i].fields && data.issues[i].fields["customfield_10197"])}`;
+                            impactValue = `${pounds.format(data[i].fields && data[i].fields["customfield_10197"])}`;
                         };
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10125"] === null){
+                        if(data[i].fields && data[i].fields["customfield_10125"] === null){
                             latitude = 'Postcode not found';
                         }
                         else{
-                            latitude = data.issues[i].fields && data.issues[i].fields["customfield_10125"];
+                            latitude = data[i].fields && data[i].fields["customfield_10125"];
                         }
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10051"] === null){
+                        if(data[i].fields && data[i].fields["customfield_10051"] === null){
                             longitude = 'Postcode not found';
                         }
                         else{
-                            longitude = data.issues[i].fields && data.issues[i].fields["customfield_10051"];
+                            longitude = data[i].fields && data[i].fields["customfield_10051"];
                         }
                         let valueD = []
-                        if(data.issues[i].fields && data.issues[i].fields["customfield_10205"] != null){
-                            let valueField = data.issues[i].fields && data.issues[i].fields["customfield_10205"]
+                        if(data[i].fields && data[i].fields["customfield_10205"] != null){
+                            let valueField = data[i].fields && data[i].fields["customfield_10205"]
                             for(let j = 0; j < valueField.length; j++){
                                 valueD.push(valueField[j].value);
                             };
@@ -250,7 +252,7 @@
                         };
                         valueDelivered = valueD.join(", ");
 
-                        const timespent = data.issues[i].fields && data.issues[i].fields.timespent;
+                        const timespent = data[i].fields && data[i].fields.timespent;
                         const time = ConvertSeconds(timespent);
 
                         if(postcode !== null && postcode !== undefined){
@@ -278,16 +280,12 @@
                 try {
                     showSpinner();
                     await fetchData();
-                    const postcodes = projectDataFromJira.map(location => location.postcode.trim());
-                    const postcodesConverted = await bulkPostcodeRequest(postcodes);
                     const usedCoordinates = new Set();
 
                     if (Array.isArray(projectDataFromJira)) {
                         const markers = [];
-                        for (let i = 0; i < projectDataFromJira.length; i++) {
-                            let location = projectDataFromJira[i]
-                            let coordinate = postcodesConverted[i]
-                            if (coordinate.result != null) {
+                        for (const location of projectDataFromJira) {
+                            if (!isNaN(parseFloat(location.latitude)) && !isNaN(parseFloat(location.longitude))) {
                                 let markerIcon;
                                 for (let key in newIcons) {
                                     if (location.sector === newIcons[key].name) {
@@ -295,23 +293,24 @@
                                         break;
                                     };
                                 };
-                                const key = `${parseFloat(coordinate.result.latitude).toFixed(6)},${parseFloat(coordinate.result.longitude).toFixed(6)}`;
+                                const key = `${parseFloat(location.latitude).toFixed(6)},${parseFloat(location.longitude).toFixed(6)}`;
+                                
                                 if(usedCoordinates.has(key)){
-                                    coordinate.result.latitude += (Math.random() - 0.5) * 0.0001;
-                                    coordinate.result.longitude += (Math.random() - 0.5) * 0.0001;
+                                    location.latitude += (Math.random() - 0.5) * 0.0001;
+                                    location.longitude += (Math.random() - 0.5) * 0.0001;
                                 };
                                 usedCoordinates.add(key);
                                 
                                 let marker = new google.maps.Marker({
-                                    position: {lat: parseFloat(coordinate.result.latitude), lng: parseFloat(coordinate.result.longitude)},
+                                    position: {lat: parseFloat(location.latitude), lng: parseFloat(location.longitude)},
                                     map,
                                     icon: {
                                         url: markerIcon,
                                         scaledSize: new google.maps.Size(30, 30)
                                     },
                                 });
-                                markers.push(marker);
-                
+                                markers.push(marker); 
+
                                 marker.addListener('click', function() {
                                     let contentString = `<div id="popupdisplay">
                                         <div>
@@ -334,8 +333,10 @@
                                     });
                                 });
                             };
-                        };
-                        new markerClusterer.MarkerClusterer({map, markers});
+                        }
+                        if (markers.length > 0) {
+                            new markerClusterer.MarkerClusterer({map, markers});
+                        }
                     };
 
                     for (let key in newIcons) {
@@ -351,8 +352,7 @@
                     console.error('Error: failed to fetch and process data', error);
                 };
                 hideSpinner();
-            };
-
+            }
 
             function showSpinner() {
                 document.getElementById('loader').style.display = 'block';
@@ -376,31 +376,6 @@
                     const legendElement = document.getElementById('legend');
                     legendElement.style.opacity = '0.97';
                 }, 1000);
-            };
-
-            async function bulkPostcodeRequest(postcodes) {
-                try {
-                    const chunks = [];
-                    while (postcodes.length) {
-                        chunks.push(postcodes.splice(0, 100));
-                    }
-                    const responses = [];
-                    for (let chunk of chunks) {
-                        const response = await fetch('https://api.postcodes.io/postcodes', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ postcodes: chunk })
-                        });
-                        const responseData = await response.json();
-                        responses.push(...responseData.result);
-                    }
-                    return responses.flat();
-                } catch (error) {
-                    console.error('Error in bulk postcode request:', error);
-                    throw error;
-                }
             };
 
             function ConvertSeconds(n) { 
